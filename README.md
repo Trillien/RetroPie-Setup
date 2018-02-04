@@ -8,12 +8,12 @@ Shell script to setup the Raspberry Pi, ODroid-C1 or a PC running Ubuntu with ma
 
 This script is designed for use on Raspbian on the Rasperry Pi, or Ubuntu on the ODroid-C1 or a PC.
 
-To run the RetroPie Setup Script make sure that your APT repositories are up-to-date and that Git is installed:
+To run the RetroPie Setup Script make sure that Git is installed:
 
 ```shell
-sudo apt-get update
-sudo apt-get dist-upgrade
-sudo apt-get install git
+sudo pacman -Sy
+sudo pacman -Syu
+sudo pacman -S git
 ```
 
 Then you can download the latest RetroPie setup script with
