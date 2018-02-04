@@ -15,8 +15,8 @@ rp_module_section="config"
 rp_module_flags="!x11 !mali"
 
 function apt_upgrade_raspbiantools() {
-    aptUpdate
-    apt-get -y dist-upgrade
+    pacmanUpdate
+	pacman -Syu --noconfirm
 }
 
 function lxde_raspbiantools() {
@@ -29,8 +29,8 @@ function lxde_raspbiantools() {
 
 function package_cleanup_raspbiantools() {
     # remove PulseAudio since this is slowing down the whole system significantly. Cups is also not needed
-    apt-get remove -y pulseaudio cups wolfram-engine sonic-pi
-    apt-get -y autoremove
+    pacman -Rs --noconfirm pulseaudio cups wolfram-engine sonic-pi
+	pacman -Rcs --noconfirm $(pacman -Qdtq)
 }
 
 function disable_blanker_raspbiantools() {

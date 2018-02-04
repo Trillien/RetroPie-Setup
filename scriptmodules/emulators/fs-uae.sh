@@ -24,7 +24,7 @@ function depends_fs-uae() {
             else
                 apt-add-repository -r -y ppa:fengestad/stable
             fi
-            aptUpdate
+            pacmanUpdate
             ;;
         Debian)
             if [[ "$md_mode" == "install" ]]; then
@@ -32,17 +32,17 @@ function depends_fs-uae() {
             else
                 rm -f /etc/apt/sources.list.d/fsuae-stable.list
             fi
-            aptUpdate
+            pacmanUpdate
             ;;
     esac
 }
 
 function install_bin_fs-uae() {
-    aptInstall fs-uae fs-uae-launcher fs-uae-arcade
+    pacmanInstall fs-uae fs-uae-launcher fs-uae-arcade
 }
 
 function remove_fs-uae() {
-    aptRemove fs-uae fs-uae-launcher fs-uae-arcade
+    pacmanRemove fs-uae fs-uae-launcher fs-uae-arcade
 }
 
 function configure_fs-uae() {

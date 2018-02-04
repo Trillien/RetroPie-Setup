@@ -66,7 +66,7 @@ function disable_usbromservice() {
 
 function remove_usbromservice() {
     disable_usbromservice
-    apt-get remove -y usbmount
+	pacman -R --noconfirm usbmount
 }
 
 function configure_usbromservice() {

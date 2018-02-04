@@ -21,11 +21,11 @@ function _update_hook_supertux() {
 }
 
 function install_bin_supertux() {
-    aptInstall supertux
+    pacmanInstall supertux
 }
 
 function remove_supertux() {
-    aptRemove supertux
+    pacmanRemove supertux
 }
 
 function configure_supertux() {

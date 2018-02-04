@@ -22,11 +22,11 @@ function _update_hook_frotz() {
 }
 
 function install_bin_frotz() {
-    aptInstall frotz
+    pacmanInstall frotz
 }
 
 function remove_frotz() {
-    aptRemove frotz
+    pacmanRemove frotz
 }
 
 function game_data_frotz() {

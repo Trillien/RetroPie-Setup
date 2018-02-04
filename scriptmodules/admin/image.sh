@@ -104,8 +104,8 @@ function install_rp_image() {
     cat > chroot/home/pi/install.sh <<_EOF_
 #!/bin/bash
 cd
-sudo apt-get update
-sudo apt-get -y install git dialog xmlstarlet joystick
+sudo pacman -Sy
+sudo pacman -S --noconfirm git dialog xmlstarlet joystick
 git clone https://github.com/RetroPie/RetroPie-Setup.git
 cd RetroPie-Setup
 modules=(
@@ -125,7 +125,7 @@ for module in "\${modules[@]}"; do
     # rpi1 platform would use QEMU_CPU set to arm1176, but it seems buggy currently (lots of segfaults)
     sudo QEMU_CPU=cortex-a15 __platform=$platform __nodialog=1 ./retropie_packages.sh \$module
 done
-sudo apt-get clean
+sudo pacman -Scc
 _EOF_
 
     # chroot and run install script

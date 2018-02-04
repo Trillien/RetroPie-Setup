@@ -45,9 +45,9 @@ function install_uqm() {
     # uqm is missing on raspbian jessie
     if hasPackage raspberrypi-bootloader; then
         dpkg -i *.deb
-        aptInstall uqm-content uqm-music uqm-voice
+        pacmanInstall uqm-content uqm-music uqm-voice
     else
-        aptInstall uqm uqm-content uqm-music uqm-voice
+        pacmanInstall uqm uqm-content uqm-music uqm-voice
     fi
 }
 
@@ -57,14 +57,14 @@ function install_bin_uqm() {
     if hasPackage raspberrypi-bootloader; then
         cd "$md_inst"
         dpkg -i *.deb
-        aptInstall uqm-content uqm-music uqm-voice
+        pacmanInstall uqm-content uqm-music uqm-voice
     else
-        aptInstall uqm uqm-content uqm-music uqm-voice
+        pacmanInstall uqm uqm-content uqm-music uqm-voice
     fi
 }
 
 function remove_uqm() {
-    aptRemove uqm uqm-content uqm-music uqm-voice
+    pacmanRemove uqm uqm-content uqm-music uqm-voice
 }
 
 function configure_uqm() {

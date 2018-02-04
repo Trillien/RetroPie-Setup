@@ -20,11 +20,11 @@ function depends_micropolis() {
 }
 
 function install_bin_micropolis() {
-    aptInstall micropolis
+    pacmanInstall micropolis
 }
 
 function remove_micropolis() {
-    aptRemove micropolis
+    pacmanRemove micropolis
 }
 
 function configure_micropolis() {

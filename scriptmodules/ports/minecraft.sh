@@ -21,11 +21,11 @@ function depends_minecraft() {
 
 function install_bin_minecraft() {
     [[ -f "$md_inst/minecraft-pi" ]] && rm -rf "$md_inst/"*
-    aptInstall minecraft-pi
+    pacmanInstall minecraft-pi
 }
 
 function remove_minecraft() {
-    aptRemove minecraft-pi
+    pacmanRemove minecraft-pi
 }
 
 function configure_minecraft() {

@@ -21,11 +21,11 @@ function _update_hook_openttd() {
 }
 
 function install_bin_openttd() {
-    aptInstall openttd
+    pacmanInstall openttd
 }
 
 function remove_openttd() {
-    aptRemove openttd
+    pacmanRemove openttd
 }
 
 function configure_openttd() {

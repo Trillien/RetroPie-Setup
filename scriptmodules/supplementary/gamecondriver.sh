@@ -23,7 +23,7 @@ function depends_gamecondriver() {
     # remove any old kernel headers for current kernel
     local kernel_ver="$(uname -r)"
     if hasPackage linux-headers-"${kernel_ver}" "${kernel_ver}-2" "eq"; then
-        aptRemove "linux-headers-${kernel_ver}"
+        pacmanRemove "linux-headers-${kernel_ver}"
     fi
     getDepends dkms raspberrypi-kernel-headers
 }
@@ -54,7 +54,7 @@ function install_bin_gamecondriver() {
 function remove_gamecondriver() {
     sed -i "/gamecon_gpio_rpi/d" /etc/modules
     rm -f /etc/modprobe.d/gamecon.conf
-    aptRemove db9-gpio-rpi-dkms gamecon-gpio-rpi-dkms
+    pacmanRemove db9-gpio-rpi-dkms gamecon-gpio-rpi-dkms
 }
 
 function configure_gamecondriver() {

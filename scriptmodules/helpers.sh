@@ -143,44 +143,40 @@ function hasPackage() {
     local req_ver="$2"
     local comp="$3"
     [[ -z "$comp" ]] && comp="ge"
-    local status=$(dpkg-query -W --showformat='${Status} ${Version}' $1 2>/dev/null)
+    local status=$(package-query -Q -f '%n %v' $1 2>/dev/null)
     if [[ $? -eq 0 ]]; then
-        local ver="${status##* }"
-        local status="${status% *}"
-        # if status doesn't contain "ok installed" package is not installed
-        if [[ "$status" == *"ok installed" ]]; then
-            # if we didn't request a version number, be happy with any
-            [[ -z "$req_ver" ]] && return 0
-            compareVersions "$ver" "$comp" "$req_ver" && return 0
-        fi
+		local ver="${status##* }"
+        # if we didn't request a version number, be happy with any
+        [[ -z "$req_ver" ]] && return 0
+        compareVersions "$ver" "$comp" "$req_ver" && return 0
     fi
     return 1
 }
 
-## @fn aptUpdate()
-## @brief Calls apt-get update (if it has not been called before).
-function aptUpdate() {
-    if [[ "$__apt_update" != "1" ]]; then
-        apt-get update
-        __apt_update="1"
+## @fn pacmanUpdate()
+## @brief Calls pacman update (if it has not been called before).
+function pacmanUpdate() {
+    if [[ "$__pacman_update" != "1" ]]; then
+        pacman -Sy
+        __pacman_update="1"
     fi
 }
 
-## @fn aptInstall()
+## @fn pacmanInstall()
 ## @param packages package / space separated list of packages to install
-## @brief Calls apt-get install with the packages provided.
-function aptInstall() {
-    aptUpdate
-    apt-get install -y "$@"
+## @brief Calls pacman install with the packages provided.
+function pacmanInstall() {
+    pacmanUpdate
+    pacman -S --noconfirm --needed "$@"
     return $?
 }
 
-## @fn aptRemove()
+## @fn pacmanRemove()
 ## @param packages package / space separated list of packages to install
-## @brief Calls apt-get remove with the packages provided.
-function aptRemove() {
-    aptUpdate
-    apt-get remove -y "$@"
+## @brief Calls pacman remove with the packages provided.
+function pacmanRemove() {
+    pacmanUpdate
+    pacman -Rs --noconfirm "$@"
     return $?
 }
 
@@ -240,8 +236,8 @@ function getDepends() {
     done
     if [[ ${#packages[@]} -ne 0 ]]; then
         if [[ "$md_mode" == "remove" ]]; then
-            apt-get remove --purge -y "${packages[@]}"
-            apt-get autoremove --purge -y
+            pacman -Rcs --noconfirm "${packages[@]}"
+			pacman -Rcs --noconfirm $(pacman -Qdtq)
             return 0
         fi
         echo "Did not find needed package(s): ${packages[@]}. I am trying to install them now."
@@ -267,10 +263,10 @@ function getDepends() {
         done
         packages=("${temp[@]}")
 
-        aptInstall --no-install-recommends "${packages[@]}"
+        pacmanInstall "${packages[@]}"
 
-        # check the required packages again rather than return code of apt-get,
-        # as apt-get might fail for other reasons (eg other half installed packages)
+        # check the required packages again rather than return code of pacman,
+        # as pacman might fail for other reasons (eg other half installed packages)
         for required in ${packages[@]}; do
             if ! hasPackage "$required"; then
                 # workaround for installing samba in a chroot (fails due to failed smbd service restart)
@@ -279,7 +275,7 @@ function getDepends() {
                     mv /etc/init.d/smbd /etc/init.d/smbd.old
                     echo "#!/bin/sh" >/etc/init.d/smbd
                     chmod u+x /etc/init.d/smbd
-                    apt-get -f install
+                    pacman -U
                     mv /etc/init.d/smbd.old /etc/init.d/smbd
                 else
                     failed+=("$required")
@@ -477,8 +473,28 @@ function diffFiles() {
 ## @retval 0 if the comparison was true
 ## @retval 1 if the comparison was false
 function compareVersions() {
-    dpkg --compare-versions "$1" "$2" "$3" >/dev/null
-    return $?
+	local result=$(vercmp $1 $3)
+	case $2 in
+		lt)
+			[[ $result -lt 0 ]] && i=0 || i=1
+			;;
+		le)
+			[[ $result -le 0 ]] && i=0 || i=1
+			;;
+		eq)
+			[[ $result -eq 0 ]] && i=0 || i=1
+			;;
+		ne)
+			[[ $result -ne 0 ]] && i=0 || i=1
+			;;
+		ge)
+			[[ $result -ge 0 ]] && i=0 || i=1
+			;;
+		gt)
+			[[ $result -gt 0 ]] && i=0 || i=1
+			;;
+	esac
+	return $i
 }
 
 ## @fn dirIsEmpty()

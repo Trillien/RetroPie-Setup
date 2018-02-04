@@ -14,9 +14,8 @@ function setup_env() {
     __ERRMSGS=()
     __INFMSGS=()
 
-    # if no apt-get we need to fail
-    [[ -z "$(which apt-get)" ]] && fatalError "Unsupported OS - No apt-get command found"
-
+    # if no pacman we need to fail
+    [[ -z "$(which pacman)" ]] && fatalError "Unsupported OS - No pacman command found"
     __memory_phys=$(free -m | awk '/^Mem:/{print $2}')
     __memory_total=$(free -m -t | awk '/^Total:/{print $2}')
 
@@ -66,13 +65,11 @@ function get_os_version() {
     getDepends lsb-release
 
     # get os distributor id, description, release number and codename
-    local os
-    mapfile -t os < <(lsb_release -sidrc)
-    __os_id="${os[0]}"
-    __os_desc="${os[1]}"
-    __os_release="${os[2]}"
-    __os_codename="${os[3]}"
-    
+    __os_id=$(lsb_release -si)
+    __os_desc=$(lsb_release -sd)
+    __os_release=$(lsb_release -sr)
+    __os_codename=$(lsb_release -sc)
+
     local error=""
     case "$__os_id" in
         Raspbian|Debian)
@@ -147,6 +144,8 @@ function get_os_version() {
         neon)
              __os_ubuntu_ver="$__os_release"
             ;;
+		Arch)
+			;;
         *)
             error="Unsupported OS"
             ;;
@@ -170,8 +169,11 @@ function get_retropie_depends() {
         echo "deb http://archive.raspberrypi.org/debian/ $__os_codename main ui" >>$config
     fi
 
-    local depends=(git dialog wget gcc g++ build-essential unzip xmlstarlet python-pyudev)
-
+	if [[ "$__os_id" == "Arch" ]]; then
+		local depends=(git dialog wget gcc base-devel unzip xmlstarlet python-pyudev)
+	else
+		local depends=(git dialog wget gcc g++ build-essential unzip xmlstarlet python-pyudev)
+	fi
     if ! getDepends "${depends[@]}"; then
         fatalError "Unable to install packages required by $0 - ${md_ret_errors[@]}"
     fi
@@ -241,6 +243,9 @@ function get_platform() {
                     i686|x86_64|amd64)
                         __platform="x86"
                         ;;
+					aarch64)
+						__platform="aarch64"
+						;;
                 esac
                 ;;
         esac
@@ -347,4 +352,11 @@ function platform_imx6() {
     __default_asflags=""
     __default_makeflags="-j2"
     __platform_flags="arm armv7 neon"
+}
+
+function platform_aarch64() {
+    __default_cflags="-O3 -march=armv8-a+crc+crypto -mtune=cortex-a53 -mfloat-abi=hard -ftree-vectorize -funsafe-math-optimizations"
+    __default_asflags=""
+    __default_makeflags="-j4"
+    __platform_flags="aarch64"
 }
