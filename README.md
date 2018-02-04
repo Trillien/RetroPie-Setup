@@ -11,7 +11,6 @@ This script is designed for use on Raspbian on the Rasperry Pi, or Ubuntu on the
 To run the RetroPie Setup Script make sure that Git is installed:
 
 ```shell
-sudo pacman -Sy
 sudo pacman -Syu
 sudo pacman -S git
 ```
